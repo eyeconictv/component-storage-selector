@@ -1,7 +1,53 @@
-<button class="btn btn-default" ng-class="{active: selected}" ng-click="open()" type="button" >
+<!-- <button class="btn btn-default" ng-class="{active: selected}" ng-click="onSingleFileClick()" type="button" >
   {{ label }}<img src="http://s3.amazonaws.com/Rise-Images/Icons/storage.png" class="storage-selector-icon" ng-class="{'icon-right': label}">
-</button>
+</button> -->
 
-<script type="text/ng-template" id="storage.html">
+<!-- <script type="text/ng-template" id="storage.html">
         <iframe class="modal-dialog" scrolling="no" marginwidth="0" src="{{ storageUrl.url }}"></iframe>
-</script>
+</script> -->
+<div class="form-group file-selector">
+  <label ng-if="title" class="control-label remove-bottom">{{ title }}</label>
+
+  <div class="row u_margin-sm-top u_margin-sm-bottom half-top half-bottom">
+    <div class="col-md-12">
+      <!-- Storage Single File - Button -->
+      <button class="btn btn-default" ng-class="{active: selected}" ng-click="onSingleFileClick()" type="button" >
+        {{ label }}<img src="http://s3.amazonaws.com/Rise-Images/Icons/storage.png" class="storage-selector-icon" ng-class="{'icon-right': label}">
+      </button>
+
+      <!-- Storage Single Folder - Button -->
+    </div>
+  </div>
+
+  <!-- Storage Single File - Input -->
+  <div class="form-group" ng-if="selector.selection === 'single-file'">
+    <div class="input-group custom-addon">
+      <input
+        name="storage-file-name"
+        type="text"
+        class="form-control"
+        ng-model="selector.storageName"
+        readonly
+      />
+      <span class="input-group-addon">
+        <button
+          name="previewBtn"
+          class="btn btn-default"
+          ng-click="previewFile()"
+        >
+          {{ 'file-selector.buttons.preview' | translate }}
+          <img
+            src="/Icons/newtab-icon.png"
+            class="storage-selector-icon icon-right"
+          />
+        </button>
+      </span>
+    </div>
+    <p ng-if="!selectorValid && fileType === 'image'" class="text-danger">
+      {{ "file-selector.errors.storage.image" | translate }}
+    </p>
+    <p ng-if="!selectorValid && fileType === 'video'" class="text-danger">
+      {{ "file-selector.errors.storage.video" | translate }}
+    </p>
+  </div>
+</div>
