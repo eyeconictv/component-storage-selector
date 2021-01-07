@@ -4,88 +4,142 @@ if (typeof angular !== "undefined") {
 }
 
 (function () {
-
   "use strict";
 
-  angular.module("risevision.widget.common.storage-selector", [
-    "ui.bootstrap",
-    "risevision.widget.common.storage-selector.config"
-  ])
-  .directive("storageSelector", ["$templateCache", "$modal", "$sce", "$log", "STORAGE_MODAL",
-    function($templateCache, $modal, $sce, $log, STORAGE_MODAL){
-      return {
-        restrict: "EA",
-        scope : {
-          companyId : "@",
-          type: "@",
-          label: "@",
-          selected: "="
-        },
-        template: $templateCache.get("storage-selector.html"),
-        link: function (scope) {
+  angular
+    .module("risevision.widget.common.storage-selector", [
+      "risevision.widget.common.storage-selector.config",
+    ])
+    .directive("storageSelector", [
+      "$templateCache",
+      "$log",
+      "fileManagerConfig",
+      function ($templateCache, $log, fileManagerConfig) {
+        return {
+          restrict: "EA",
+          scope: {
+            fileType: "@",
+            selectionType: "@",
+            label: "@",
+            selected: "=",  //url
+          },
+          template: $templateCache.get("storage-selector.html"),
+          link: function (scope) {
+            scope.open = function () {
+              console.log("fileManagerConfig", fileManagerConfig);
+              var fileManager = window.eyeconicFileManager;
 
-          function updateStorageUrl() {
-            if (typeof scope.type !== "undefined" && scope.type !== "") {
-              scope.storageUrl = STORAGE_MODAL + scope.companyId + "&selector-type=" + scope.type;
-            } else {
-              // If no "type" value then omit the selector-type param to allow In-App Storage to apply a default
-              scope.storageUrl = STORAGE_MODAL + scope.companyId;
-            }
-          }
 
-          scope.storageUrl = "";
+              var imageExtensions = [
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".bmp",
+                ".svg",
+                ".gif",
+                ".webp",
+              ];
 
-          scope.open = function() {
+              var videoExtensions = [".webm", ".mp4", ".ogv", ".ogg"];
+              var extensions;
 
-            scope.modalInstance = $modal.open({
-              templateUrl: "storage.html",
-              controller: "StorageCtrl",
-              size: "md",
-              backdrop: true,
-              resolve: {
-                storageUrl: function () {
-                  return {url: $sce.trustAsResourceUrl(scope.storageUrl)};
+              switch (scope.fileType) {
+                case "image":
+                  extensions = imageExtensions;
+                  break;
+                case "video":
+                  extensions = videoExtensions;
+                  break;
+                default: {
+                  extensions = [];
+                  imageExtensions.forEach(function(x){
+                    extensions.push(x);
+                  });
+                  videoExtensions.forEach(function(x){
+                    extensions.push(x);
+                  });
                 }
               }
-            });
 
-            scope.modalInstance.result.then(function (files) {
-              // for unit test purposes
-              scope.files = files;
+              function hasValidExtension(url) {
+                var testUrl = url.toLowerCase();
 
-              $log.info("Picked: ", files);
+                for (var i = 0, len = extensions.length; i < len; i++) {
+                  if (testUrl.indexOf(extensions[i]) !== -1) {
+                    return true;
+                  }
+                }
 
-              // emit an event with name "files", passing the array of files selected from storage and the selector type
-              scope.$emit("picked", files, scope.type);
+                return false;
+              }
 
-            }, function () {
-              // for unit test purposes
-              scope.canceled = true;
+              function getDirectoryHistory(url) {
+                if (url) {
+                  var a = url.replace("http://", "").replace("https://", "");
 
-              $log.info("Modal dismissed at: " + new Date());
+                  var root = fileManagerConfig.root;
+                  var splitted = a.split(root);
+                  var breadcrumbs = [];
 
-            });
+                  if (splitted.length >= 2) {
+                    var portion = splitted[1].split("/");
+                    var pathPrefix = root;
 
-          };
+                    portion.forEach(function (p, index) {
+                      if (p.length > 0) {
+                        if (index + 1 !== portion.length || !p.includes(".")) {
+                          breadcrumbs.push({
+                            path: pathPrefix + p + "/",
+                            displayName: p,
+                          });
+                          pathPrefix = pathPrefix + p + "/";
+                        }
+                      }
+                    });
+                  }
+                  return breadcrumbs;
+                }
+                return [];
+              }
 
-          scope.$watch("companyId", function (companyId) {
-            if (companyId) {
-              updateStorageUrl();
-            }
-          });
+              function typeFilter(item) {
+                return !item.mimeType || hasValidExtension(item.url);
+              }
+              var fileManagerInstance;
+              var fileManagerProps = Object.assign({}, fileManagerConfig, {
+                filterItems: typeFilter,
+                selectionType: scope.selectionType,
+                accept: extensions.join(","),
+                directoryHistory: scope.selected ? getDirectoryHistory(scope.selected) : [],
+                onSelected: function (test) {
+                  // for unit test purposes
+                  scope.files = [test.url];
 
-          scope.$watch("type", function (type) {
-            if (type) {
-              updateStorageUrl();
-            }
-          });
-        }
-      };
-   }
-  ]);
+                  $log.info("Picked: ", scope.files);
+                  fileManagerInstance.setOpen(false);
+                  // emit an event with name "files", passing the array of files selected from storage and the selector type
+                  scope.$emit(
+                    "picked",
+                    scope.files,
+                    scope.fileType,
+                    test,
+                    scope.selectionType
+                  );
+                },
+              });
+
+              fileManagerInstance = fileManager.useFileManager(
+                fileManagerProps,
+                document.getElementById("file-selector")
+              );
+
+              fileManagerInstance.setOpen(true);
+            };
+          },
+        };
+      },
+    ]);
 })();
-
-
 
 angular.module("risevision.widget.common.storage-selector")
   .controller("StorageCtrl", ["$scope", "$modalInstance", "storageUrl", "$window", "$log", "STORAGE_MODAL",
@@ -127,10 +181,8 @@ module.run(["$templateCache", function($templateCache) {
     "<button class=\"btn btn-default\" ng-class=\"{active: selected}\" ng-click=\"open()\" type=\"button\" >\n" +
     "  {{ label }}<img src=\"http://s3.amazonaws.com/Rise-Images/Icons/storage.png\" class=\"storage-selector-icon\" ng-class=\"{'icon-right': label}\">\n" +
     "</button>\n" +
+    "<div id=\"file-selector\"></div>\n" +
     "\n" +
-    "<script type=\"text/ng-template\" id=\"storage.html\">\n" +
-    "        <iframe class=\"modal-dialog\" scrolling=\"no\" marginwidth=\"0\" src=\"{{ storageUrl.url }}\"></iframe>\n" +
-    "</script>\n" +
     "");
 }]);
 })();
