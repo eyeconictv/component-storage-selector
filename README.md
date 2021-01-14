@@ -27,7 +27,7 @@ At this time Chrome is the only browser that this project and Rise Vision suppor
 * [Gulp](http://gulpjs.com/) - Gulp is a Javascript task runner. It lints, runs unit and E2E (end-to-end) tests, minimizes files, etc. Gulp tasks are defined in _gulpfile.js_.
 
 ### Built With
-- *NPM (that can utilize package-lock.json) (npm for node 10/12 works)*
+- *NPM*
 - *Node (8.10.0)*
 - *AngularJS*
 - *Gulp*
