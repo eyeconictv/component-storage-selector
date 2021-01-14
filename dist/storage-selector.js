@@ -178,9 +178,13 @@ catch(err) { module = angular.module("risevision.widget.common.storage-selector"
 module.run(["$templateCache", function($templateCache) {
   "use strict";
   $templateCache.put("storage-selector.html",
-    "<button class=\"btn btn-default\" ng-class=\"{active: selected}\" ng-click=\"open()\" type=\"button\" >\n" +
-    "  {{ label }}<img src=\"http://s3.amazonaws.com/Rise-Images/Icons/storage.png\" class=\"storage-selector-icon\" ng-class=\"{'icon-right': label}\">\n" +
-    "</button>\n" +
+    "\n" +
+    "<label class=\"storage-selector-icon\" ng-class=\"{'icon-right': label}\">\n" +
+    "  <button class=\"btn btn-default\" ng-class=\"{active: selected}\" ng-click=\"open()\" type=\"button\" >\n" +
+    "    <!-- {{ label }}<img src=\"http://s3.amazonaws.com/Rise-Images/Icons/storage.png\" > -->\n" +
+    "    Upload\n" +
+    "  </button>\n" +
+    "</label>\n" +
     "<div id=\"file-selector\"></div>\n" +
     "\n" +
     "");
