@@ -26,6 +26,12 @@ At this time Chrome is the only browser that this project and Rise Vision suppor
 * [Bower](http://bower.io/) - Bower is a package manager for Javascript libraries and frameworks. All third-party Javascript dependencies are listed in the _bower.json_ file.
 * [Gulp](http://gulpjs.com/) - Gulp is a Javascript task runner. It lints, runs unit and E2E (end-to-end) tests, minimizes files, etc. Gulp tasks are defined in _gulpfile.js_.
 
+### Built With
+- *NPM (that can utilize package-lock.json) (npm for node 10/12 works)*
+- *Node (8.10.0)*
+- *AngularJS*
+- *Gulp*
+
 ### Local Development Environment Setup and Installation
 To make changes to the component, you'll first need to install the dependencies:
 
