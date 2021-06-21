@@ -17,7 +17,7 @@
   ],
   "devDependencies": {
     "angular-mocks": "~1.3.0",
-    "smarthub-filemanager": "porcupine-plan/file-manager#v1.0.17"
+    "smarthub-filemanager": "porcupine-plan/file-manager#1.0.17"
   },
   "dependencies": {
     "angular": "~1.3.0",
