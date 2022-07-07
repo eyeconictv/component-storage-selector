@@ -36,7 +36,6 @@
     "gulp-watch": "^0.6.8",
     "jshint-stylish": "^0.2.0",
     "phantomjs": "^1.9.7-9",
-    "run-sequence": "^0.3.2",
-    "widget-tester": "git://github.com/porcupine-plan/widget-tester.git"
+    "run-sequence": "^0.3.2"
   }
 }
