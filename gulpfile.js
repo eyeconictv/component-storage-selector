@@ -15,7 +15,7 @@
   var runSequence = require('run-sequence');
   var path = require('path');
   var rename = require('gulp-rename');
-  //var factory = require('widget-tester').gulpTaskFactory;
+  var factory = require('widget-tester').gulpTaskFactory;
   var bower = require("gulp-bower");
   var del = require("del");
 
@@ -86,28 +86,28 @@
       .pipe(gulp.dest('dist'));
   });
 
-  // gulp.task("e2e:server-close", factory.testServerClose());
-  // gulp.task("e2e:server", factory.testServer());
-  // gulp.task("webdriver_update", factory.webdriveUpdate());
-  // gulp.task("test:e2e:ng:core", factory.testE2EAngular());
+  gulp.task("e2e:server-close", factory.testServerClose());
+  gulp.task("e2e:server", factory.testServer());
+  gulp.task("webdriver_update", factory.webdriveUpdate());
+  gulp.task("test:e2e:ng:core", factory.testE2EAngular());
 
-  // gulp.task('test:metrics', factory.metrics());
+  gulp.task('test:metrics', factory.metrics());
 
   gulp.task("test:e2e:ng", ["webdriver_update"], function (cb) {
     return runSequence("e2e:server", "test:e2e:ng:core", "e2e:server-close", cb);
   });
 
-  // gulp.task("test:unit:ng", factory.testUnitAngular({
-  //   testFiles: [
-  //     "components/angular/angular.js",
-  //     "components/angular-bootstrap/ui-bootstrap-tpls.js",
-  //     "components/angular-mocks/angular-mocks.js",
-  //     "src/config/dev.js",
-  //     "src/dtv-storage-selector.js",
-  //     "src/ctr-storage-selector.js",
-  //     "test/unit/**/*spec.js"
-  //   ]
-  // }));
+  gulp.task("test:unit:ng", factory.testUnitAngular({
+    testFiles: [
+      "components/angular/angular.js",
+      "components/angular-bootstrap/ui-bootstrap-tpls.js",
+      "components/angular-mocks/angular-mocks.js",
+      "src/config/dev.js",
+      "src/dtv-storage-selector.js",
+      "src/ctr-storage-selector.js",
+      "test/unit/**/*spec.js"
+    ]
+  }));
 
   // ***** Primary Tasks ***** //
 

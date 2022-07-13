@@ -127,7 +127,7 @@
                 fileManagerProps,
                 document.getElementById("file-selector")
               );
-              console.log("fileManagerPropsToBeUSed", fileManagerProps);
+
               fileManagerInstance.setOpen(true);
             };
           },
